@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 14:02:10 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/04 19:49:34 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/05 18:22:41 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,12 @@ class Parsing
     void    rmspace(std::string &content);
     void    splitservers(std::string &content);
     void    svrcreate(std::string &config, Config &server);
-
+    void    svrcheck();
     size_t  svrstart(size_t start, std::string &content);
     size_t  svrend(size_t start, std::string &content);
 
+    std::vector<Config>	getServers();
+    
     class ErrorException : public std::exception
     {
         public:

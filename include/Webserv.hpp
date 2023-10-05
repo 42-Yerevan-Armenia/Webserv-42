@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 13:30:55 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/04 20:33:33 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/05 20:33:21 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,10 @@
 #include "Config.hpp"
 #include "Location.hpp"
 #include "Logger.hpp"
+#include "Manager.hpp"
+#include "Client.hpp"
+#include "Response.hpp"
+#include "HttpRequest.hpp"
 
 #define MAX_CONTENT_LENGTH 30000000
 

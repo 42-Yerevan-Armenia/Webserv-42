@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 14:45:58 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/05 18:12:58 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/05 19:03:27 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void    Parsing::splitservers(std::string &content)
     }
 }
 
-static std::vector<std::string> splitParametrs(std::string line, std::string sep)
+std::vector<std::string> splitParametrs(std::string line, std::string sep)
 {
 	std::vector<std::string>	str;
 	std::string::size_type		start, end;
@@ -237,6 +237,17 @@ void Parsing::svrcreate(std::string &config, Config &server)
 		throw ErrorException("Incorrect path for error page or number of error");   
 }
 
+void Parsing::svrcheck()
+{
+    std::vector<Config>::iterator   it1;
+    std::vector<Config>::iterator   it2;
+
+    for (it1 = _servers.begin(); it1 != _servers.end() - 1; it1++)
+        for (it2 = it1 + 1; it2 != _servers.end(); it2++)
+            if (it1->getPort() == it2->getPort() && it1->getHost() == it2->getHost() && it1->getServerName() == it2->getServerName())
+                throw ErrorException("Failed server validation");
+}
+
 int Parsing::create(const std::string &config_file)
 {
     std::string content;
@@ -258,6 +269,11 @@ int Parsing::create(const std::string &config_file)
     {
         Config server;
         svrcreate(_config[i], server);
+        _servers.push_back(server);
     }
+    if (_nb_server > 1)
+        svrcheck();
     return (0);
 }
+
+std::vector<Config>	Parsing::getServers(){return (this->_servers);}
