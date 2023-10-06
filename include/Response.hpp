@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 20:33:46 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 17:48:13 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 19:42:10 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class Response
         void        handleCgi(HttpRequest&);
 
         std::string     _response_content;
-        // CgiHandler		_cgi_obj;
+        CgiHandler		_cgi_obj;
         HttpRequest     request;
         std::string removeBoundary(std::string &body, std::string &boundary);
 

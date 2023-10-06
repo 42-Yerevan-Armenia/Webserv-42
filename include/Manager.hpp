@@ -6,14 +6,16 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 18:36:14 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/05 20:24:21 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 20:15:44 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MANAGER_HPP
 # define MANAGER_HPP
 
-#include "Webserv.hpp"
+# include "Webserv.hpp"
+# include "Client.hpp"
+# include "Response.hpp"
 
 class Manager
 {
@@ -24,17 +26,25 @@ class Manager
         void    svrrun();
 
     private:
-        void    initializeSets();
-        void    addToSet(const int i, fd_set &set);
-        void    acceptNewConnection(Config &serv);
-        void	removeFromSet(const int i, fd_set &set);
+        void checkTimeout();
+        void initializeSets();
+        void assignServer(Client &);
+        void handleReqBody(Client &);
+        void closeConnection(const int);
+        void acceptNewConnection(Config &);
+        void addToSet(const int , fd_set &);
+        void readRequest(const int &, Client &);
+        void sendResponse(const int &, Client &);
+        void removeFromSet(const int , fd_set &);
+        void sendCgiBody(Client &, CgiHandler &);
+        void readCgiResponse(Client &, CgiHandler &);
 
-        std::vector<Config>     _servers;
-        std::map<int, Config>   _servers_map;
-        // std::map<int, Client>   _clients_map;
+        int                     _biggest_fd;
         fd_set                  _recv_fd_pool;
         fd_set                  _write_fd_pool;
-        int                     _biggest_fd;
+        std::vector<Config>     _servers;
+        std::map<int, Config>   _servers_map;
+        std::map<int, Client>   _clients_map;
 };
 
 #endif

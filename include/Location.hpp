@@ -6,14 +6,14 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 19:50:47 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/04 20:03:21 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 20:06:41 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LOCATION_HPP
 # define LOCATION_HPP
 
-#include "Webserv.hpp"
+# include "Webserv.hpp"
 
 class Location
 {

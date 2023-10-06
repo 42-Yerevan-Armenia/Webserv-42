@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 20:35:59 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 14:24:47 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 20:21:15 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,8 +198,8 @@ static bool isToken(uint8_t ch)
 
 void    HttpRequest::feed(char *data, size_t size)
 {
-    u_int8_t                    character;
-    static std::stringstream    s;
+    u_int8_t character;
+    static std::stringstream s;
 
     for (size_t i = 0; i < size; ++i)
     {
@@ -213,7 +213,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 else if (character == 'P')
                 {
                     _state = Request_Line_Post_Put;
-                    break;
+                    break ;
                 }
                 else if (character == 'D')
                     _method = DELETE;
@@ -223,10 +223,10 @@ void    HttpRequest::feed(char *data, size_t size)
                 {
                     _error_code = 501;
                     std::cout << "Method Error Request_Line and Character is = " << character << std::endl;
-                    return ;    
+                    return ;
                 }
                 _state = Request_Line_Method;
-                break;
+                break ;
             }
             case Request_Line_Post_Put:
             {
@@ -254,7 +254,6 @@ void    HttpRequest::feed(char *data, size_t size)
                     std::cout << "Method Error Request_Line and Character is = " << character << std::endl;
                     return ;
                 }
-
                 if ((size_t) _method_index == _method_str[_method].length())
                     _state = Request_Line_First_Space;
                 break ;
@@ -312,6 +311,36 @@ void    HttpRequest::feed(char *data, size_t size)
                 {
                     _error_code = 400;
                     std::cout << "Bad Character (Request_Line_URI_Path)" << std::endl;
+                    return ;
+                }
+                else if ( i > MAX_URI_LENGTH)
+                {
+                    _error_code = 414;
+                    std::cout << "URI Too Long (Request_Line_URI_Path)" << std::endl;
+                    return ;
+                }
+                break ;
+            }
+            case Request_Line_URI_Query:
+            {
+                if (character == ' ')
+                {
+                    _state = Request_Line_Ver;
+                    _query.append(_storage);
+                    _storage.clear();
+                    continue ;
+                }
+                else if (character == '#')
+                {
+                    _state = Request_Line_URI_Fragment;
+                    _query.append(_storage);
+                    _storage.clear();
+                    continue ;
+                }
+                else if (!allowedCharURI(character))
+                {
+                    _error_code = 400;
+                    std::cout << "Bad Character (Request_Line_URI_Query)" << std::endl;
                     return ;
                 }
                 else if ( i > MAX_URI_LENGTH)
@@ -490,10 +519,14 @@ void    HttpRequest::feed(char *data, size_t size)
                         if (_chunked_flag == true)
                             _state = Chunked_Length_Begin;
                         else
+                        {
                             _state = Message_Body;
+                        }
                     }
                     else
+                    {
                         _state = Parsing_Done;
+                    }
                     continue ;
                 }
                 else
@@ -661,7 +694,6 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 _state = Chunked_End_LF;
                 continue ;
-
             }
             case Chunked_End_LF:
             {
@@ -693,6 +725,6 @@ void    HttpRequest::feed(char *data, size_t size)
         }
         _storage += character;
     }
-    if (_state == Parsing_Done)
+    if( _state == Parsing_Done)
         _body_str.append((char*)_body.data(), _body.size());
 }

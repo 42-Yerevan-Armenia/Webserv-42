@@ -6,11 +6,12 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 13:29:26 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/05 18:59:45 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 20:39:56 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Webserv.hpp"
+#include "../include/Manager.hpp"
 
 int main(int ac, char **av)
 {
@@ -22,10 +23,10 @@ int main(int ac, char **av)
     {
         try
         {
-            config = (ac == 1 ? "conf/default.conf" : av[1]);
+            config = (ac == 1 ? "configs/default.conf" : av[1]);
             cluster.create(config);
             master.svrsetup(cluster.getServers());
-			// master.svrrun();
+			master.svrrun();
         }
         catch (std::exception &e)
         {

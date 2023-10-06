@@ -6,15 +6,15 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:03:00 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/04 15:32:46 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 21:23:50 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/ConfigFile.hpp"
 
-ConfigFile::ConfigFile(){}
+ConfigFile::ConfigFile() : _size(0) {}
 ConfigFile::~ConfigFile(){}
-ConfigFile::ConfigFile(std::string const path) : _path(path){}
+ConfigFile::ConfigFile(std::string const path) : _path(path), _size(0){}
 
 std::string ConfigFile::getPath(){return (this->_path);}
 
@@ -34,8 +34,8 @@ int  ConfigFile::getType(std::string const path)
 {
     struct stat buffer;
     int         res;
-
     res = stat(path.c_str(), &buffer);
+
     if (res == 0)
     {
         if (buffer.st_mode & S_IFREG)
@@ -49,6 +49,7 @@ int  ConfigFile::getType(std::string const path)
         return (-1);    
 }
 
+int ConfigFile::getSize(){return (_size);}
 int  ConfigFile::checkFile(std::string const path, int mode){return (access(path.c_str(), mode));}
 
 int  ConfigFile::isFile(std::string const path, std::string const index)

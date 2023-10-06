@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 17:37:59 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/04 20:20:34 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 21:32:24 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,9 @@ void Config::setRoot(std::string root)
 	}
 	char dir[1024];
 	getcwd(dir, 1024);
+	std::cout << "❌ " << dir << std::endl;
 	std::string full_root = dir + root;
+	std::cout << "❌ " << full_root << std::endl;
 	if (ConfigFile::getType(full_root) != 2)
 		throw ErrorException("Wrong syntax: root");
 	_root = full_root;
@@ -485,12 +487,12 @@ void Config::checkToken(std::string &parametr)
 
 bool Config::checkLocaitons() const
 {
-	if (this->_locations.size() < 2)
+	if (_locations.size() < 2)
 		return (false);
 	std::vector<Location>::const_iterator it1;
 	std::vector<Location>::const_iterator it2;
-	for (it1 = this->_locations.begin(); it1 != this->_locations.end() - 1; it1++) {
-		for (it2 = it1 + 1; it2 != this->_locations.end(); it2++) {
+	for (it1 = _locations.begin(); it1 != _locations.end() - 1; it1++) {
+		for (it2 = it1 + 1; it2 != _locations.end(); it2++) {
 			if (it1->getPath() == it2->getPath())
 				return (true);
 		}

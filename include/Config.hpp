@@ -6,14 +6,14 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 17:34:58 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/04 19:18:32 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 20:04:50 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONFIG_HPP
-#define CONFIG_HPP
+# define CONFIG_HPP
 
-#include "Webserv.hpp"
+# include "Webserv.hpp"
 
 static std::string	srvparametrs[] = {"listen", "server_name", "root", "index", "allow_methods", "client_body_buffer_size"};
 

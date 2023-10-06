@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 13:31:11 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 17:37:18 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 19:56:31 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,15 @@ std::string getErrorPage(short statusCode)
     return ("<html>\r\n<head><title>" + toString(statusCode) + " " +
              statusCodeString(statusCode) + " </title></head>\r\n" + "<body>\r\n" + 
             "<center><h1>" + toString(statusCode) + " " + statusCodeString(statusCode) + "</h1></center>\r\n");
+}
+
+unsigned int fromHexToDec(const std::string& nb)
+{
+	unsigned int x;
+	std::stringstream ss;
+	ss << nb;
+	ss >> std::hex >> x;
+	return (x);
 }
 
 int buildHtmlIndex(std::string &dir_name, std::vector<uint8_t> &body, size_t &body_len)
