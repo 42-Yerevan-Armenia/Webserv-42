@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 13:30:55 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/05 20:33:21 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 14:18:41 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 #include "Response.hpp"
 #include "HttpRequest.hpp"
 
+#define MAX_URI_LENGTH 4096
 #define MAX_CONTENT_LENGTH 30000000
 
 int ft_stoi(std::string str);

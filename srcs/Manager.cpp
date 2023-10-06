@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 18:36:16 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/05 20:38:27 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/10/06 13:24:46 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,10 +82,10 @@ void    Manager::acceptNewConnection(Config &serv)
     struct  sockaddr_in client_address;
     long                client_address_size = sizeof(client_address);
     int                 client_sock;
-    Client              new_client(serv);//here
+    Client              new_client(serv);
     // char                buf[INET_ADDRSTRLEN];
 
-    if ((client_sock = accept(serv.getFd(), (struct sockaddr_in *)&client_address, (socklen_t *)&client_address_size)) == -1)
+    if ( (client_sock = accept(serv.getFd(), (struct sockaddr *)&client_address, (socklen_t*)&client_address_size)) == -1)
     {
         // Logger
         return ;
