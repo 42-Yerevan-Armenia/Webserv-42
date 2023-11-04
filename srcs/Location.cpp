@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 19:52:17 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/04 20:09:32 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/11/04 18:41:33 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ Location &Location::operator=(const Location &other)
 
 void Location::setRootLocation(std::string parametr)
 {
-	if (ConfigFile::getType(parametr) != 2)
+	if (ConfigFile::getTypePath(parametr) != 2)
 		throw Config::ErrorException("location of root");
 	_root = parametr;
 }

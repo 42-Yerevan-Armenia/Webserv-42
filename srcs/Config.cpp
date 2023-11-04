@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 17:37:59 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 21:32:24 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/11/04 18:55:00 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,17 +104,15 @@ void Config::setHost(std::string parametr)
 void Config::setRoot(std::string root)
 {
 	checkToken(root);
-	if (ConfigFile::getType(root) == 2)
+	if (ConfigFile::getTypePath(root) == 2)
 	{
 		_root = root;
 		return ;
 	}
 	char dir[1024];
 	getcwd(dir, 1024);
-	std::cout << "❌ " << dir << std::endl;
 	std::string full_root = dir + root;
-	std::cout << "❌ " << full_root << std::endl;
-	if (ConfigFile::getType(full_root) != 2)
+	if (ConfigFile::getTypePath(full_root) != 2)
 		throw ErrorException("Wrong syntax: root");
 	_root = full_root;
 }
@@ -188,9 +186,9 @@ void Config::setErrorPages(std::vector<std::string> &parametr)
 		i++;
 		std::string path = parametr[i];
 		checkToken(path);
-		if (ConfigFile::getType(path) != 2)
+		if (ConfigFile::getTypePath(path) != 2)
 		{
-			if (ConfigFile::getType(_root + path) != 1)
+			if (ConfigFile::getTypePath(_root + path) != 1)
 				throw ErrorException ("Incorrect path for error page file: " + _root + path);
 			if (ConfigFile::checkFile(_root + path, 0) == -1 || ConfigFile::checkFile(_root + path, 4) == -1)
 				throw ErrorException ("Error page file :" + _root + path + " is not accessible");
@@ -220,7 +218,7 @@ void Config::setLocation(std::string path, std::vector<std::string> parametr)
 			if (!new_location.getRootLocation().empty())
 				throw ErrorException("Root of location is duplicated");
 			checkToken(parametr[++i]);
-			if (ConfigFile::getType(parametr[i]) == 2)
+			if (ConfigFile::getTypePath(parametr[i]) == 2)
 				new_location.setRootLocation(parametr[i]);
 			else
 				new_location.setRootLocation(_root + parametr[i]);
@@ -384,13 +382,13 @@ int Config::isValidLocation(Location &location) const
 		if (ConfigFile::checkFile(location.getIndexLocation(), 4) < 0)
 		{
 			std::string path = location.getRootLocation() + location.getPath() + "/" + location.getIndexLocation();
-			if (ConfigFile::getType(path) != 1)
+			if (ConfigFile::getTypePath(path) != 1)
 			{				
 				std::string root = getcwd(NULL, 0);
 				location.setRootLocation(root);
 				path = root + location.getPath() + "/" + location.getIndexLocation();
 			}
-			if (path.empty() || ConfigFile::getType(path) != 1 || ConfigFile::checkFile(path, 4) < 0)
+			if (path.empty() || ConfigFile::getTypePath(path) != 1 || ConfigFile::checkFile(path, 4) < 0)
 				return (1);
 		}
 		if (location.getCgiPath().size() != location.getCgiExtension().size())
@@ -398,7 +396,7 @@ int Config::isValidLocation(Location &location) const
 		std::vector<std::string>::const_iterator it;
 		for (it = location.getCgiPath().begin(); it != location.getCgiPath().end(); ++it)
 		{
-			if (ConfigFile::getType(*it) < 0)
+			if (ConfigFile::getTypePath(*it) < 0)
 				return (1);
 		}
 		std::vector<std::string>::const_iterator it_path;

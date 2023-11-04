@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 20:35:01 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 17:47:31 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/11/04 18:44:12 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -550,7 +550,7 @@ int     Response::handleCgi(std::string &location_key)
         _code = 501;
         return (1);
     }
-    if (ConfigFile::getType(path) != 1)
+    if (ConfigFile::getTypePath(path) != 1)
     {
         _code = 404;
         return (1);

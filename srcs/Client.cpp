@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 20:25:18 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 14:26:41 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/11/04 18:46:14 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void    Client::buildResponse()
     response.setRequest(request);
     response.buildResponse();
 }
-
 
 void    Client::clearClient()
 {

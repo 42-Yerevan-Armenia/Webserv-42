@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/04 15:03:04 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 21:24:13 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/11/04 18:55:00 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class ConfigFile
         int getSize();
         std::string getPath();
         std::string readFile(std::string path);
-        static int  getType(std::string const path);
+        static int  getTypePath(std::string const path);
         static int  checkFile(std::string const path, int mode);
         static int  isFile(std::string const path, std::string const index);
 

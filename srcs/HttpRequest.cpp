@@ -6,7 +6,7 @@
 /*   By: arakhurs <arakhurs@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/05 20:35:59 by arakhurs          #+#    #+#             */
-/*   Updated: 2023/10/06 20:21:15 by arakhurs         ###   ########.fr       */
+/*   Updated: 2023/11/04 18:39:31 by arakhurs         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,129 +39,9 @@ HttpRequest::HttpRequest()
     _boundary = "";
 }
 
-HttpRequest::~HttpRequest(){}
-void    HttpRequest::setMaxBodySize(size_t size){_max_body_size = size;}
-void    HttpRequest::setMethod(HttpMethod &method){_method = method;}
+HttpRequest::~HttpRequest() {}
 
-void    HttpRequest::setBody(std::string body)
-{
-    _body.clear();
-    _body.insert(_body.begin(), body.begin(), body.end());
-    _body_str = body;
-}
-
-static void    trimStr(std::string &str)
-{
-    static const char* spaces = " \t";
-    str.erase(0, str.find_first_not_of(spaces));
-    str.erase(str.find_last_not_of(spaces) + 1);
-}
-
-static void    toLower(std::string &str)
-{
-    for (size_t i = 0; i < str.length(); ++i)
-        str[i] = std::tolower(str[i]);
-}
-
-void    HttpRequest::setHeader(std::string &name, std::string &value)
-{
-    trimStr(value);
-    toLower(name);
-    _request_headers[name] = value;
-}
-
-std::string &HttpRequest::getPath()                                         {return (_path);}
-std::string &HttpRequest::getBody()                                         {return (_body_str);}
-std::string &HttpRequest::getQuery()                                        {return (_query);}
-std::string &HttpRequest::getFragment()                                     {return (_fragment);}
-std::string &HttpRequest::getBoundary()                                     {return (_boundary);}
-std::string HttpRequest::getMethodStr()                                     {return (_method_str[_method]);}
-std::string HttpRequest::getServerName()                                    {return (_server_name);}
-std::string HttpRequest::getHeader(std::string const &name)                 {return (_request_headers[name]);}
-bool        HttpRequest::getMultiformFlag()                                 {return (_multiform_flag);}
-HttpMethod  &HttpRequest::getMethod()                                       {return (_method);}
-const std::map<std::string, std::string> &HttpRequest::getHeaders() const   {return (_request_headers);}
-
-void    HttpRequest::clear()
-{
-    _path.clear();
-    _error_code = 0;
-    _query.clear();
-    _fragment.clear();
-    _method = NONE;
-    _method_index = 1;
-    _state = Request_Line;
-    _body_length = 0;
-    _chunk_length = 0x0;
-    _storage.clear();
-    _body_str = "";
-    _key_storage.clear();
-    _request_headers.clear();
-    _server_name.clear();
-    _body.clear();
-    _boundary.clear();
-    _fields_done_flag = false;
-    _body_flag = false;
-    _body_done_flag = false;
-    _complete_flag = false;
-    _chunked_flag = false;
-    _multiform_flag = false;
-}
-
-void    HttpRequest::_handle_headers()
-{
-    std::stringstream ss;
-
-    if (_request_headers.count("content-length"))
-    {
-        _body_flag = true;
-        ss << _request_headers["content-length"];
-        ss >> _body_length;
-    }
-    if ( _request_headers.count("transfer-encoding"))
-    {
-        if (_request_headers["transfer-encoding"].find_first_of("chunked") != std::string::npos)
-            _chunked_flag = true;
-        _body_flag = true;
-    }
-    if (_request_headers.count("host"))
-    {
-        size_t pos = _request_headers["host"].find_first_of(':');
-        _server_name = _request_headers["host"].substr(0, pos);
-    }
-    if (_request_headers.count("content-type") && _request_headers["content-type"].find("multipart/form-data") != std::string::npos)
-    {
-        size_t pos = _request_headers["content-type"].find("boundary=", 0);
-        if (pos != std::string::npos)
-            _boundary = _request_headers["content-type"].substr(pos + 9, _request_headers["content-type"].size());
-        _multiform_flag = true;
-    }
-}
-
-void    HttpRequest::printMessage()
-{
-    std::cout << _method_str[_method] + " " + _path + "?" + _query + "#" + _fragment + " " + "HTTP/" << _ver_major  << "." << _ver_minor << std::endl;
-    for (std::map<std::string, std::string>::iterator it = _request_headers.begin(); it != _request_headers.end(); ++it)
-        {std::cout << it->first + ":" + it->second << std::endl;}
-    for (std::vector<u_int8_t>::iterator it = _body.begin(); it != _body.end(); ++it)
-        {std::cout << *it;}
-    std::cout << std::endl << "END OF BODY" << std::endl;
-    std::cout << "BODY FLAG =" << _body_flag << "  _BOD_done_flag= " << _body_done_flag << "FEIDLS FLAG = " << _fields_done_flag << std::endl;
-}
-
-void    HttpRequest::cutReqBody(int bytes){_body_str = _body_str.substr(bytes);}
-short   HttpRequest::errorCode(){return (_error_code);}
-bool    HttpRequest::parsingCompleted(){return (_state == Parsing_Done);}
-
-bool    HttpRequest::keepAlive()
-{
-    if (_request_headers.count("connection"))
-        if (_request_headers["connection"].find("close", 0) != std::string::npos)
-            return (false);
-    return (true);
-}
-
-static bool checkUriPos(std::string path)
+bool    checkUriPos(std::string path)
 {
     std::string tmp(path);
     char *res = strtok((char*)tmp.c_str(), "/");
@@ -179,7 +59,16 @@ static bool checkUriPos(std::string path)
     return (0);
 }
 
-static bool allowedCharURI(uint8_t ch)
+/**
+
+ * Checks if character is allowed to be in a URI
+ * Characters allowed as specifed in RFC:
+   Alphanumeric: A-Z a-z 0-9
+   Unreserved: - _ . ~
+   Reserved:  * ' ( ) ; : @ & = + $ , / ? % # [ ]
+
+ **/
+bool    allowedCharURI(uint8_t ch)
 {
     if ((ch >= '#' && ch <= ';') || (ch >= '?' && ch <= '[') || (ch >= 'a' && ch <= 'z') ||
        ch == '!' || ch == '=' || ch == ']' || ch == '_' || ch == '~')
@@ -187,7 +76,17 @@ static bool allowedCharURI(uint8_t ch)
     return (false);
 }
 
-static bool isToken(uint8_t ch)
+/**
+
+* Checks whether the character passed is allowed in a field name
+* Characters allowed as specifed in RFC:
+
+"!" / "#" / "$" / "%" / "&" / "'"
+/ "*" / "+" / "-" / "." / "^" / "_"
+/ "`" / "|" / "~" / 0-9 / A-Z / a-z
+
+**/
+bool    isToken(uint8_t ch)
 {
     if (ch == '!' || (ch >= '#' && ch <= '\'') || ch == '*'|| ch == '+' || ch == '-'  || ch == '.' ||
        (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= '^' && ch <= '`') ||
@@ -196,6 +95,19 @@ static bool isToken(uint8_t ch)
     return (false);
 }
 
+/* Trim leading and trailing  spaces */
+void    trimStr(std::string &str)
+{
+    static const char* spaces = " \t";
+    str.erase(0, str.find_first_not_of(spaces));
+    str.erase(str.find_last_not_of(spaces) + 1);
+}
+
+void    toLower(std::string &str)
+{
+    for (size_t i = 0; i < str.length(); ++i)
+        str[i] = std::tolower(str[i]);
+}
 void    HttpRequest::feed(char *data, size_t size)
 {
     u_int8_t character;
@@ -254,6 +166,7 @@ void    HttpRequest::feed(char *data, size_t size)
                     std::cout << "Method Error Request_Line and Character is = " << character << std::endl;
                     return ;
                 }
+
                 if ((size_t) _method_index == _method_str[_method].length())
                     _state = Request_Line_First_Space;
                 break ;
@@ -444,6 +357,7 @@ void    HttpRequest::feed(char *data, size_t size)
                     return ;
                 }
                 _ver_major = character;
+
                 _state = Request_Line_Dot;
                 break ;
             }
@@ -514,6 +428,7 @@ void    HttpRequest::feed(char *data, size_t size)
                     _storage.clear();
                     _fields_done_flag = true;
                     _handle_headers();
+                    //if no body then parsing is completed.
                     if (_body_flag == 1)
                     {
                         if (_chunked_flag == true)
@@ -524,9 +439,7 @@ void    HttpRequest::feed(char *data, size_t size)
                         }
                     }
                     else
-                    {
                         _state = Parsing_Done;
-                    }
                     continue ;
                 }
                 else
@@ -553,6 +466,8 @@ void    HttpRequest::feed(char *data, size_t size)
                     return ;
                 }
                 break ;
+                //if (!character allowed)
+                // error;
             }
             case Field_Value:
             {
@@ -694,6 +609,7 @@ void    HttpRequest::feed(char *data, size_t size)
                 }
                 _state = Chunked_End_LF;
                 continue ;
+
             }
             case Chunked_End_LF:
             {
@@ -722,9 +638,119 @@ void    HttpRequest::feed(char *data, size_t size)
             {
                 return ;
             }
-        }
+        }//end of swtich
         _storage += character;
     }
     if( _state == Parsing_Done)
         _body_str.append((char*)_body.data(), _body.size());
+}
+
+bool    HttpRequest::getMultiformFlag()                                     {return (_multiform_flag);}
+bool    HttpRequest::parsingCompleted()                                     {return (_state == Parsing_Done);}
+HttpMethod  &HttpRequest::getMethod()                                       {return (_method);}
+std::string &HttpRequest::getPath()                                         {return (_path);}
+std::string &HttpRequest::getQuery()                                        {return (_query);}
+std::string &HttpRequest::getFragment()                                     {return (_fragment);}
+std::string &HttpRequest::getBody()                                         {return (_body_str);}
+std::string &HttpRequest::getBoundary()                                     {return (_boundary);}
+std::string HttpRequest::getServerName()                                    {return (_server_name);}
+std::string HttpRequest::getMethodStr()                                     {return (_method_str[_method]);}
+std::string HttpRequest::getHeader(std::string const &name)                 {return (_request_headers[name]);}
+const std::map<std::string, std::string> &HttpRequest::getHeaders() const   {return (_request_headers);}
+
+void    HttpRequest::setBody(std::string body)
+{
+    _body.clear();
+    _body.insert(_body.begin(), body.begin(), body.end());
+    _body_str = body;
+}
+
+void    HttpRequest::setMethod(HttpMethod & method) {_method = method;}
+void    HttpRequest::setMaxBodySize(size_t size)    {_max_body_size = size;}
+void    HttpRequest::cutReqBody(int bytes)          {_body_str = _body_str.substr(bytes);}
+short   HttpRequest::errorCode()                    {return (_error_code);}
+
+void    HttpRequest::setHeader(std::string &name, std::string &value)
+{
+    trimStr(value);
+    toLower(name);
+    _request_headers[name] = value;
+}
+
+void        HttpRequest::printMessage()
+{
+    std::cout << _method_str[_method] + " " + _path + "?" + _query + "#" + _fragment + " " + "HTTP/" << _ver_major  << "." << _ver_minor << std::endl;
+    for (std::map<std::string, std::string>::iterator it = _request_headers.begin(); it != _request_headers.end(); ++it)
+        std::cout << it->first + ":" + it->second << std::endl;
+    for (std::vector<u_int8_t>::iterator it = _body.begin(); it != _body.end(); ++it)
+        std::cout << *it;
+    std::cout << std::endl << "END OF BODY" << std::endl;
+    std::cout << "BODY FLAG =" << _body_flag << "  _BOD_done_flag= " << _body_done_flag << "FEIDLS FLAG = " << _fields_done_flag
+    << std::endl;
+}
+
+void        HttpRequest::_handle_headers()
+{
+    std::stringstream ss;
+
+    if (_request_headers.count("content-length"))
+    {
+        _body_flag = true;
+        ss << _request_headers["content-length"];
+        ss >> _body_length;
+    }
+    if ( _request_headers.count("transfer-encoding"))
+    {
+        if (_request_headers["transfer-encoding"].find_first_of("chunked") != std::string::npos)
+            _chunked_flag = true;
+        _body_flag = true;
+    }
+    if (_request_headers.count("host"))
+    {
+        size_t pos = _request_headers["host"].find_first_of(':');
+        _server_name = _request_headers["host"].substr(0, pos);
+    }
+    if (_request_headers.count("content-type") && _request_headers["content-type"].find("multipart/form-data") != std::string::npos)
+    {
+        size_t pos = _request_headers["content-type"].find("boundary=", 0);
+        if (pos != std::string::npos)
+            _boundary = _request_headers["content-type"].substr(pos + 9, _request_headers["content-type"].size());
+        _multiform_flag = true;
+    }
+}
+
+/* Reset object variables to recive new request */
+void    HttpRequest::clear()
+{
+    _path.clear();
+    _error_code = 0;
+    _query.clear();
+    _fragment.clear();
+    _method = NONE;
+    _method_index = 1;
+    _state = Request_Line;
+    _body_length = 0;
+    _chunk_length = 0x0;
+    _storage.clear();
+    _body_str = "";
+    _key_storage.clear();
+    _request_headers.clear();
+    _server_name.clear();
+    _body.clear();
+    _boundary.clear();
+    _fields_done_flag = false;
+    _body_flag = false;
+    _body_done_flag = false;
+    _complete_flag = false;
+    _chunked_flag = false;
+    _multiform_flag = false;
+}
+
+/* Checks the value of header "Connection". If keep-alive, don't close the connection. */
+bool        HttpRequest::keepAlive()
+{
+    if (_request_headers.count("connection"))
+        if (_request_headers["connection"].find("close", 0) != std::string::npos)
+            return (false);
+    return (true);
 }
